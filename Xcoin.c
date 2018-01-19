@@ -10,12 +10,13 @@
 #include "sph_jh.h"
 #include "sph_keccak.h"
 #include "sph_skein.h"
-#include "sph_gost.h"
-#include "sph_luffa.h"
-#include "sph_cubehash.h"
-#include "sph_shavite.h"
-#include "sph_simd.h"
-#include "sph_echo.h"
+#include "sph_biblepay.h"
+// #include "sph_gost.h"
+// #include "sph_luffa.h"
+// #include "sph_cubehash.h"
+// #include "sph_shavite.h"
+// #include "sph_simd.h"
+// #include "sph_echo.h"
 
 /* Move init out of loop, so init once externally, and then use one single memcpy with that bigger memory block */
 typedef struct {
@@ -25,12 +26,13 @@ typedef struct {
 	sph_skein512_context	skein1;
 	sph_jh512_context		jh1;
 	sph_keccak512_context	keccak1;
-	sph_gost512_context      gost1;
-	sph_luffa512_context 	luffa1;
-	sph_cubehash512_context cubehash1;
-	sph_shavite512_context  shavite1;
-	sph_simd512_context		simd1;
-	sph_echo512_context		echo1;
+	sph_biblepay512_context    biblepay1;
+	// sph_gost512_context      gost1;
+	// sph_luffa512_context 	luffa1;
+	// sph_cubehash512_context cubehash1;
+	// sph_shavite512_context  shavite1;
+	// sph_simd512_context		simd1;
+	// sph_echo512_context		echo1;
 } Xhash_context_holder;
 
 Xhash_context_holder base_contexts;
@@ -42,13 +44,14 @@ void init_Xhash_contexts()
     sph_groestl512_init(&base_contexts.groestl1);	
     sph_skein512_init(&base_contexts.skein1);	
     sph_jh512_init(&base_contexts.jh1);		
-    sph_keccak512_init(&base_contexts.keccak1);	
-    sph_gost512_init(&base_contexts.gost1);	
-    sph_luffa512_init(&base_contexts.luffa1);
-    sph_cubehash512_init(&base_contexts.cubehash1);
-    sph_shavite512_init(&base_contexts.shavite1);
-    sph_simd512_init(&base_contexts.simd1);
-    sph_echo512_init(&base_contexts.echo1);
+    sph_keccak512_init(&base_contexts.keccak1);
+    sph_biblepay512_init(&base_contexts.biblepay1);	
+    // sph_gost512_init(&base_contexts.gost1);	
+    // sph_luffa512_init(&base_contexts.luffa1);
+    // sph_cubehash512_init(&base_contexts.cubehash1);
+    // sph_shavite512_init(&base_contexts.shavite1);
+    // sph_simd512_init(&base_contexts.simd1);
+    // sph_echo512_init(&base_contexts.echo1);
 }
 
 static void Xhash(void *state, const void *input)
@@ -79,23 +82,26 @@ static void Xhash(void *state, const void *input)
     sph_keccak512 (&ctx.keccak1, hashA, 64); 
     sph_keccak512_close(&ctx.keccak1, hashB);
 
-    sph_gost512 (&ctx.gost1, hashB, 64); 
-    sph_gost512_close(&ctx.gost1, hashA);
+    sph_biblepay512 (&ctx.biblepay1, hashB, 64); 
+    sph_biblepay512_close(&ctx.biblepay1, hashA);
 
-    sph_luffa512 (&ctx.luffa1, hashA, 64);
-    sph_luffa512_close (&ctx.luffa1, hashB);	
+ //    sph_gost512 (&ctx.gost1, hashB, 64); 
+ //    sph_gost512_close(&ctx.gost1, hashA);
+
+ //    sph_luffa512 (&ctx.luffa1, hashA, 64);
+ //    sph_luffa512_close (&ctx.luffa1, hashB);	
     	
-    sph_cubehash512 (&ctx.cubehash1, hashB, 64);   
-    sph_cubehash512_close(&ctx.cubehash1, hashA);  
+ //    sph_cubehash512 (&ctx.cubehash1, hashB, 64);   
+ //    sph_cubehash512_close(&ctx.cubehash1, hashA);  
 	
-    sph_shavite512 (&ctx.shavite1, hashA, 64);   
-    sph_shavite512_close(&ctx.shavite1, hashB);  
+ //    sph_shavite512 (&ctx.shavite1, hashA, 64);   
+ //    sph_shavite512_close(&ctx.shavite1, hashB);  
 	
-	sph_simd512 (&ctx.simd1, hashB, 64);   
-    sph_simd512_close(&ctx.simd1, hashA); 
+	// sph_simd512 (&ctx.simd1, hashB, 64);   
+ //    sph_simd512_close(&ctx.simd1, hashA); 
 	
-	sph_echo512 (&ctx.echo1, hashA, 64);   
-    sph_echo512_close(&ctx.echo1, hashB);    
+	// sph_echo512 (&ctx.echo1, hashA, 64);   
+ //    sph_echo512_close(&ctx.echo1, hashB);    
 
 	memcpy(state, hashB, 32);
 	
